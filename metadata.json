@@ -1,0 +1,7 @@
+{
+  "name": "Wiggly Snake",
+  "description": "A chaotic, interactive generative art experience. Move fast to unleash the chaos.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
