@@ -1,5 +1,70 @@
-<canvas #canvas class="block w-full h-full cursor-none"></canvas>
+<canvas #canvas class="block w-full h-full cursor-none" [class.pointer-events-none]="!warningDismissed()"></canvas>
 <div class="fixed top-0 left-0 w-full h-full pointer-events-none flex items-center justify-center transition-opacity duration-1000"
      [class.opacity-0]="hasInteracted()">
   <p class="text-white font-mono text-sm opacity-50 tracking-widest">MOVE / TOUCH / SHAKE</p>
 </div>
+
+<!-- Content Warning Overlay -->
+<div *ngIf="!warningDismissed()" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
+  <div class="text-center text-white">
+    <svg class="w-16 h-16 mx-auto mb-4" fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 361.117 361.117" xml:space="preserve">
+      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+      <g id="SVGRepo_iconCarrier">
+        <g>
+          <g>
+            <path d="M359.568,327.246L191.511,21.818c-2.197-3.993-6.395-6.474-10.952-6.474c-4.558,0-8.754,2.481-10.952,6.474L1.549,327.246 c-2.131,3.872-2.058,8.582,0.191,12.388c2.249,3.805,6.34,6.139,10.76,6.139h336.117c4.421,0,8.512-2.334,10.761-6.139 C361.627,335.828,361.699,331.118,359.568,327.246z M33.646,320.772L180.559,53.773l146.913,266.999H33.646z"></path>
+            <path d="M164.894,143.085v90.351c0,8.65,7.014,15.665,15.665,15.665c8.65,0,15.665-7.015,15.665-15.665v-90.351 c0-8.651-7.015-15.665-15.665-15.665C171.908,127.42,164.894,134.435,164.894,143.085z"></path>
+            <path d="M180.559,265.364c-9.097,0-16.5,7.399-16.5,16.5c0,9.098,7.403,16.5,16.5,16.5c9.097,0,16.5-7.402,16.5-16.5 C197.059,272.764,189.655,265.364,180.559,265.364z"></path>
+          </g>
+        </g>
+      </g>
+    </svg>
+    <p class="text-2xl font-bold mb-8">Rapid changing images and loud noises</p>
+    <button (click)="dismissWarning()" class="bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors">Continue</button>
+  </div>
+</div>
+
+<!-- Warning Modal -->
+<div *ngIf="showWarningModal()" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
+  <div class="text-center text-white bg-black bg-opacity-80 p-8 rounded-lg max-w-md">
+    <svg class="w-12 h-12 mx-auto mb-4" fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 361.117 361.117" xml:space="preserve">
+      <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+      <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+      <g id="SVGRepo_iconCarrier">
+        <g>
+          <g>
+            <path d="M359.568,327.246L191.511,21.818c-2.197-3.993-6.395-6.474-10.952-6.474c-4.558,0-8.754,2.481-10.952,6.474L1.549,327.246 c-2.131,3.872-2.058,8.582,0.191,12.388c2.249,3.805,6.34,6.139,10.76,6.139h336.117c4.421,0,8.512-2.334,10.761-6.139 C361.627,335.828,361.699,331.118,359.568,327.246z M33.646,320.772L180.559,53.773l146.913,266.999H33.646z"></path>
+            <path d="M164.894,143.085v90.351c0,8.65,7.014,15.665,15.665,15.665c8.65,0,15.665-7.015,15.665-15.665v-90.351 c0-8.651-7.015-15.665-15.665-15.665C171.908,127.42,164.894,134.435,164.894,143.085z"></path>
+            <path d="M180.559,265.364c-9.097,0-16.5,7.399-16.5,16.5c0,9.098,7.403,16.5,16.5,16.5c9.097,0,16.5-7.402,16.5-16.5 C197.059,272.764,189.655,265.364,180.559,265.364z"></path>
+          </g>
+        </g>
+      </g>
+    </svg>
+    <p class="text-lg font-bold mb-4">Content Warning</p>
+    <p class="mb-6">This app contains rapid changing images and loud noises.</p>
+    <button (click)="toggleWarningModal()" class="bg-white text-black px-4 py-2 rounded font-semibold hover:bg-gray-200 transition-colors">Close</button>
+  </div>
+</div>
+
+<!-- Warning Button -->
+<button *ngIf="warningDismissed()" (click)="toggleWarningModal()" 
+        style="position: fixed; bottom: 20px; left: 20px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; color: white; padding: 10px 20px; font-size: 14px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); display: flex; align-items: center; gap: 8px;" 
+        onmouseover="this.style.background='rgba(255, 255, 255, 0.2)'; this.style.transform='scale(1.05)'" 
+        onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='scale(1)'" 
+        title="Content Warning">
+  <svg style="width: 16px; height: 16px;" fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 361.117 361.117" xml:space="preserve">
+    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+    <g id="SVGRepo_iconCarrier">
+      <g>
+        <g>
+          <path d="M359.568,327.246L191.511,21.818c-2.197-3.993-6.395-6.474-10.952-6.474c-4.558,0-8.754,2.481-10.952,6.474L1.549,327.246 c-2.131,3.872-2.058,8.582,0.191,12.388c2.249,3.805,6.34,6.139,10.76,6.139h336.117c4.421,0,8.512-2.334,10.761-6.139 C361.627,335.828,361.699,331.118,359.568,327.246z M33.646,320.772L180.559,53.773l146.913,266.999H33.646z"></path>
+          <path d="M164.894,143.085v90.351c0,8.65,7.014,15.665,15.665,15.665c8.65,0,15.665-7.015,15.665-15.665v-90.351 c0-8.651-7.015-15.665-15.665-15.665C171.908,127.42,164.894,134.435,164.894,143.085z"></path>
+          <path d="M180.559,265.364c-9.097,0-16.5,7.399-16.5,16.5c0,9.098,7.403,16.5,16.5,16.5c9.097,0,16.5-7.402,16.5-16.5 C197.059,272.764,189.655,265.364,180.559,265.364z"></path>
+        </g>
+      </g>
+    </g>
+  </svg>
+  Warning
+</button>

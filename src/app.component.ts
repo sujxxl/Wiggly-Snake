@@ -23,6 +23,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   // State
   hasInteracted = signal(false);
+  warningDismissed = signal(false);
+  showWarningModal = signal(false);
   private ctx: CanvasRenderingContext2D | null = null;
   private animationFrameId: number = 0;
 
@@ -91,7 +93,7 @@ ngAfterViewInit() {
   this.lastInteractionTime = Date.now();
 
   this.resetSnakePositions(cx, canvas.height);
-  this.animate();
+  this.draw();
 }
 
   private resetSnakePositions(cx: number, height: number) {
@@ -115,6 +117,15 @@ ngOnDestroy() {
   window.removeEventListener('touchmove', this.handleTouchMove);
   window.removeEventListener('touchstart', this.handleTouchStart);
   window.removeEventListener('click', this.activateAudio);
+}
+
+dismissWarning() {
+  this.warningDismissed.set(true);
+  this.animate(); // Start animation after warning is dismissed
+}
+
+toggleWarningModal() {
+  this.showWarningModal.set(!this.showWarningModal());
 }
 
   private resizeCanvas = () => {
@@ -170,6 +181,56 @@ ngOnDestroy() {
     this.lastInteractionTime = Date.now();
   }
 };
+
+private draw() {
+  if (!this.ctx || !this.canvasRef) return;
+
+  const canvas = this.canvasRef.nativeElement;
+  const width = canvas.width;
+  const height = canvas.height;
+
+  // Static draw with no chaos
+  const isChaotic = false;
+  const chaosLevel = 0;
+  this.shakeX = 0;
+  this.shakeY = 0;
+  this.backgroundColor = '#000';
+
+  this.ctx.save();
+  this.ctx.translate(this.shakeX, this.shakeY);
+
+  this.ctx.fillStyle = this.backgroundColor;
+  this.ctx.fillRect(-50, -50, width + 100, height + 100);
+
+  // Snake Visuals
+  this.ctx.lineCap = 'round';
+  this.ctx.lineJoin = 'round';
+
+  this.ctx.shadowBlur = 0;
+
+  this.ctx.beginPath();
+
+  const startX = this.segments[0].x;
+  const startY = this.segments[0].y;
+
+  this.ctx.moveTo(startX, startY);
+
+  for (let i = 1; i < this.NUM_SEGMENTS; i++) {
+    const segment = this.segments[i];
+    this.ctx.lineTo(segment.x, segment.y);
+  }
+
+  this.ctx.strokeStyle = '#f0f0f0';
+  let baseWidth = 8;
+
+  this.ctx.lineWidth = baseWidth;
+
+  this.ctx.stroke();
+
+  this.drawFace(startX, startY, isChaotic);
+
+  this.ctx.restore();
+}
 
   private animate = () => {
   if (!this.ctx || !this.canvasRef) return;
